@@ -1,1 +1,1 @@
-# subscriptionsbot
+# subscriptions_telegrambot
