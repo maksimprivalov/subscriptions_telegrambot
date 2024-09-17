@@ -3,6 +3,8 @@ package com.github.maksimprivalov.subscriptions_telegrambot.command;
 import com.github.maksimprivalov.subscriptions_telegrambot.bot.SSTelegramBot;
 import com.github.maksimprivalov.subscriptions_telegrambot.service.SendBotMessageService;
 import com.github.maksimprivalov.subscriptions_telegrambot.service.SendBotMessageServiceImpl;
+import com.github.maksimprivalov.subscriptions_telegrambot.service.TelegramUserService;
+import com.github.maksimprivalov.subscriptions_telegrambot.service.TelegramUserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -17,7 +19,7 @@ abstract class AbstractCommandTest {
 
     protected SSTelegramBot telegramBot = Mockito.mock(SSTelegramBot.class);
     protected SendBotMessageService sendBotMessageService = new SendBotMessageServiceImpl(telegramBot);
-
+    protected TelegramUserService telegramUserService = Mockito.mock(TelegramUserService.class);
     abstract String getCommandName();
 
     abstract String getCommandMessage();
