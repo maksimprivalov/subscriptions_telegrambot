@@ -28,6 +28,7 @@
 		<url/>
 	</scm>
 	<properties>
+		<apache.commons.version>3.11</apache.commons.version>
 		<java.version>17</java.version>
 		<unirest.version>3.11.01</unirest.version>
 	</properties>
@@ -46,6 +47,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-lang3</artifactId>
+		<version>${apache.commons.version}</version>
+	</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
