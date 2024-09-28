@@ -38,9 +38,11 @@ public class DeleteGroupSubCommandTest {
         Long chatId = 23456L;
         Update update = prepareUpdate(chatId, DELETE_GROUP_SUB.getCommandName());
 
-        Mockito.when(telegramUserService.findByChatId(String.valueOf(chatId)))
-                .thenReturn(Optional.of(new TelegramUser()));
+        TelegramUser user = new TelegramUser();
+        user.setGroupSubs(new ArrayList<>());
 
+        Mockito.when(telegramUserService.findByChatId(chatId.toString()))
+                .thenReturn(Optional.of(user));
         String expectedMessage = "You haven't subscribed on any group yet! " +
                 "\nType /addGroupSub and choose a group to subscribe!";
 
@@ -68,7 +70,7 @@ public class DeleteGroupSubCommandTest {
                 "\nFor example, /deleteGroupSub 16 \n\n" +
                 "Here are your active subscriptions:\n" +
                 "Group - ID\n\n" +
-                "GS1 Title - 123";
+                "GS1 Title - 123\n";
 
         //when
         command.execute(update);
