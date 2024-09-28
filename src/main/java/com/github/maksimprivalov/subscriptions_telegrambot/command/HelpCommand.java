@@ -15,9 +15,10 @@ public class HelpCommand implements  Command{
             "%s - pause working with me\n\n" +
             "Subscriptions: \n" +
             "%s - subscribe a group \n" +
+            "%s - unsubscribe a group \n" +
             "%s - check my subscriptions \n\n" +
             "%s - get some helpful manuals about working with me!\n", START.getCommandName(), STOP.getCommandName(),
-            ADD_GROUP_SUB.getCommandName(), LIST_GROUP_SUB.getCommandName(), HELP.getCommandName());
+            ADD_GROUP_SUB.getCommandName(), DELETE_GROUP_SUB.getCommandName(), LIST_GROUP_SUB.getCommandName(), HELP.getCommandName());
 
     public HelpCommand(SendBotMessageService sendBotMessageService) {
         this.sendBotMessageService = sendBotMessageService;
