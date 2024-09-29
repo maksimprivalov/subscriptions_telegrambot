@@ -1,5 +1,6 @@
 package com.github.maksimprivalov.subscriptions_telegrambot.service;
 
+import com.github.maksimprivalov.subscriptions_telegrambot.javarushclient.JavaRushGroupClient;
 import com.github.maksimprivalov.subscriptions_telegrambot.javarushclient.dto.GroupDiscussionInfo;
 import com.github.maksimprivalov.subscriptions_telegrambot.repository.GroupSubRepository;
 import com.github.maksimprivalov.subscriptions_telegrambot.repository.entity.GroupSub;
@@ -16,14 +17,18 @@ public class GroupSubServiceTest {
     private GroupSubService groupSubService;
     private GroupSubRepository groupSubRepository;
     private TelegramUser newUser;
-
+    private final JavaRushGroupClient javaRushGroupClient;
     private final static String CHAT_ID = "1";
+
+    public GroupSubServiceTest(JavaRushGroupClient javaRushGroupClient) {
+        this.javaRushGroupClient = javaRushGroupClient;
+    }
 
     @BeforeEach
     public void init() {
         TelegramUserService telegramUserService = Mockito.mock(TelegramUserService.class);
         groupSubRepository = Mockito.mock(GroupSubRepository.class);
-        groupSubService = new GroupSubServiceImpl(groupSubRepository, telegramUserService);
+        groupSubService = new GroupSubServiceImpl(groupSubRepository, telegramUserService, javaRushGroupClient);
 
         newUser = new TelegramUser();
         newUser.setActive(true);

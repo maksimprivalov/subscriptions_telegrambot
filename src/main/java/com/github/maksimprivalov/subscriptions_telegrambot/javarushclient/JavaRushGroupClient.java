@@ -39,4 +39,5 @@ public interface JavaRushGroupClient {
      * @return {@link GroupDiscussionInfo} object.
      */
     GroupDiscussionInfo getGroupById(Integer id);
+    Integer findLastArticleId(Integer groupSubId);
 }
