@@ -8,6 +8,7 @@ import com.github.maksimprivalov.subscriptions_telegrambot.repository.entity.Tel
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.util.Optional;
@@ -16,25 +17,27 @@ import java.util.Optional;
 public class GroupSubServiceTest {
     private GroupSubService groupSubService;
     private GroupSubRepository groupSubRepository;
+    private JavaRushGroupClient javaRushGroupClient;
     private TelegramUser newUser;
-    private final JavaRushGroupClient javaRushGroupClient;
-    private final static String CHAT_ID = "1";
 
-    public GroupSubServiceTest(JavaRushGroupClient javaRushGroupClient) {
-        this.javaRushGroupClient = javaRushGroupClient;
-    }
+    private final static Long CHAT_ID = 1234234L;
+    private final static Integer GROUP_ID = 1123;
+    private final static Integer LAST_POST_ID = 310;
 
     @BeforeEach
     public void init() {
         TelegramUserService telegramUserService = Mockito.mock(TelegramUserService.class);
         groupSubRepository = Mockito.mock(GroupSubRepository.class);
+        javaRushGroupClient = Mockito.mock(JavaRushGroupClient.class);
         groupSubService = new GroupSubServiceImpl(groupSubRepository, telegramUserService, javaRushGroupClient);
 
         newUser = new TelegramUser();
         newUser.setActive(true);
-        newUser.setChatId(CHAT_ID);
+        newUser.setChatId(String.valueOf(CHAT_ID));
 
-        Mockito.when(telegramUserService.findByChatId(CHAT_ID)).thenReturn(Optional.of(newUser));
+        Mockito.when(telegramUserService.findByChatId(String.valueOf(CHAT_ID))).thenReturn(Optional.of(newUser));
+
+        Mockito.when(javaRushGroupClient.findLastArticleId(GROUP_ID)).thenReturn(LAST_POST_ID);
     }
 
     @Test
@@ -42,16 +45,17 @@ public class GroupSubServiceTest {
         //given
 
         GroupDiscussionInfo groupDiscussionInfo = new GroupDiscussionInfo();
-        groupDiscussionInfo.setId(1);
+        groupDiscussionInfo.setId(GROUP_ID);
         groupDiscussionInfo.setTitle("g1");
 
         GroupSub expectedGroupSub = new GroupSub();
         expectedGroupSub.setId(groupDiscussionInfo.getId());
         expectedGroupSub.setTitle(groupDiscussionInfo.getTitle());
+        expectedGroupSub.setLastArticleId(LAST_POST_ID);
         expectedGroupSub.addUser(newUser);
 
         //when
-        groupSubService.save(CHAT_ID, groupDiscussionInfo);
+        groupSubService.save(String.valueOf(CHAT_ID), groupDiscussionInfo);
 
         //then
         Mockito.verify(groupSubRepository).save(expectedGroupSub);
@@ -61,7 +65,7 @@ public class GroupSubServiceTest {
     public void shouldProperlyAddUserToExistingGroup() {
         //given
         TelegramUser oldTelegramUser = new TelegramUser();
-        oldTelegramUser.setChatId("2");
+        oldTelegramUser.setChatId(String.valueOf(2L));
         oldTelegramUser.setActive(true);
 
         GroupDiscussionInfo groupDiscussionInfo = new GroupDiscussionInfo();
@@ -82,7 +86,7 @@ public class GroupSubServiceTest {
         expectedGroupSub.addUser(newUser);
 
         //when
-        groupSubService.save(CHAT_ID, groupDiscussionInfo);
+        groupSubService.save(String.valueOf(CHAT_ID), groupDiscussionInfo);
 
         //then
         Mockito.verify(groupSubRepository).findById(groupDiscussionInfo.getId());

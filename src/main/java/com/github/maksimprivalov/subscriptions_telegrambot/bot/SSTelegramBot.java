@@ -9,7 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+
 import static com.github.maksimprivalov.subscriptions_telegrambot.command.CommandName.NO;
+import static com.github.maksimprivalov.subscriptions_telegrambot.command.CommandUtils.getUsername;
 
 @Component
 public class SSTelegramBot extends TelegramLongPollingBot {
@@ -25,8 +29,10 @@ public class SSTelegramBot extends TelegramLongPollingBot {
     private final CommandContainer commandContainer;
 
     @Autowired
-    public SSTelegramBot(TelegramUserService telegramUserService, JavaRushGroupClient groupClient, GroupSubService groupSubService) {
-        this.commandContainer = new CommandContainer(new SendBotMessageServiceImpl(this), telegramUserService, groupClient, groupSubService);
+    public SSTelegramBot(TelegramUserService telegramUserService, JavaRushGroupClient groupClient, GroupSubService groupSubService, @Value("#{'${bot.admins}'.split(',')}") List<String> admins) {
+        this.commandContainer =
+                new CommandContainer(new SendBotMessageServiceImpl(this),
+                        telegramUserService, groupClient, groupSubService, admins);
     }
 
     @Override
@@ -36,12 +42,12 @@ public class SSTelegramBot extends TelegramLongPollingBot {
             if(message.startsWith(COMMAND_PREFIX)){
                 String commandIdentifier = message.split(" ")[0].toLowerCase();
 
-                commandContainer.retrieveCommand(commandIdentifier).execute(update);
+                commandContainer.retrieveCommand(commandIdentifier, getUsername(update)).execute(update);
             }else{
-                commandContainer.retrieveCommand(NO.getCommandName()).execute(update);
+                commandContainer.retrieveCommand(NO.getCommandName(), getUsername(update)).execute(update);
             }
         }else{
-            commandContainer.retrieveCommand("Sorry, i can't support this type of communication...").execute(update);
+            commandContainer.retrieveCommand("Sorry, i can't support this type of communication...", getUsername(update)).execute(update);
         }
     }
 
