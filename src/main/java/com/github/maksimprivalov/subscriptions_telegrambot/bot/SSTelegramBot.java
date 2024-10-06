@@ -60,4 +60,5 @@ public class SSTelegramBot extends TelegramLongPollingBot {
     public String getBotToken() {
         return token;
     }
+
 }

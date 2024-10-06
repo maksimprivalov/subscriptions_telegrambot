@@ -1,26 +1,32 @@
-version: '3.1'
+version: '3.9'
 
 services:
-  tgbot-bot:
+  # Сервис PostgreSQL
+  tgbot_db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: tg_bot_user       # Имя пользователя
+      POSTGRES_PASSWORD: tg_bot_password # Пароль для пользователя
+      POSTGRES_DB: tgbot_db            # Название базы данных
+    ports:
+      - '5432:5432'                    # Порт для подключения
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Хранение данных вне контейнера
+
+  # Сервис приложения (бота)
+  tgbot_bot:
     depends_on:
-      - tgbot-db
+      - tgbot_db                       # Зависимость от базы данных
     build:
       context: .
     environment:
-      BOT_NAME: ${BOT_NAME}
-      BOT_TOKEN: ${BOT_TOKEN}
-      BOT_DB_USERNAME: ${BOT_DB_USERNAME}
-      BOT_DB_PASSWORD: ${BOT_DB_PASSWORD}
-    restart: always
-  tgbot-db:
-    image: mysql:5.7
-    restart: always
-    environment:
-      MYSQL_USER: ${BOT_DB_USERNAME}
-      MYSQL_PASSWORD: ${BOT_DB_PASSWORD}
-      MYSQL_DATABASE: 'tgbot_db'
-      MYSQL_ROOT_PASSWORD: 'root'
-    ports:
-      - '3306:3306'
-    expose:
-      - '3306'
+      BOT_NAME: 'subscriptions_tg_bot'
+      BOT_TOKEN: '7026490842:AAE9K-ooBZ3bzhq6DMbbO8Vyh8W5T_1tppg'
+      BOT_DB_USERNAME: 'tg_bot_user'   # Переменные для подключения к базе
+      BOT_DB_PASSWORD: 'tg_bot_password'
+      BOT_DB_URL: 'jdbc:postgresql://tgbot_db:5432/tgbot_db'
+    restart: always                    # Автоматический перезапуск
+
+volumes:
+  pgdata:                              # Для постоянного хранения данных PostgreSQL
